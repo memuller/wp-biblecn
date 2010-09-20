@@ -26,19 +26,23 @@ Author URI: http://memuller.com
 
 ********************************************************************************
 */
+// Requires the BibleReference class and the HAML library.
 require_once('bible_reference.php'); 
 require_once('includes/haml/HamlParser.class.php');
 
+// The filter. Replaces references on the_content with quotations.
 function biblecn_filter($content) {
   $content = preg_replace("'\[Bible:(.*?)\]'e", "BibleReference::get_reference('\\1')", $content);
   return $content;	
 
 }
 
+// Install function, executed when the plugin is enabled.
 function biblecn_install(){
     return true ; 
 }
 
+// Registers the filter and install functions.
 if( function_exists('add_filter') && function_exists('add_action') ) {
   if ( isset($_GET['activate']) && $_GET['activate'] == 'true' ){
     add_action( 'init', 'biblecn_install' );
