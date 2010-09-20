@@ -26,66 +26,8 @@ Author URI: http://memuller.com
 
 ********************************************************************************
 */
-
-class BibleReference {
-  const server_url = 'http://integracao.cancaonovamobile.com/ws/biblia/server.php?wsdl';
-  
-  static function client(){
-    return new SoapClient(self::server_url); 
-  }
-
-  static function get_book_id($abbr){
-    $response = self::client()->listarLivros(array('liv_abrev' => $abbr)) ; 
-    return $response[0]->liv_cod  ;
-  }
-
-  static function get_verse_or_verse_range($things){
-    $client = self::client();
-    $num_hiphens = substr_count($things[2], '-') ; 
-    if( $num_hiphens == 0 ){
-      $response = call_user_func_array(array($client, "listarVersiculos" ), $things) ;
-      $text = $response[0]->ver_conteudo ; 
-    } else if ( $num_hiphens == 1) {
-      $verses = preg_split( '/-/', $things[2]);
-      $params = array( $things[0], $things[1], $verses[0], $verses[1]);
-      $response = call_user_func_array( array( $client, "listarVersiculosIntervalo"), $params)  ;
-      $text = "";
-      for ($i = 0; $i < count($response); $i++) {
-        $text .= $response[$i]->ver_conteudo ;
-      }
-    } else {
-      return false ;
-    }
-    return $text ;
-  }
-
-  static function parse_reference($ref){
-    $result = preg_split( '/,/' , trim($ref) ) ;
-    $result2 = preg_split( '/ /', trim($result[0]) ) ;
-    if (isset($result[1]) == false or isset($result2[0]) == false or isset($result2[1]) == false) {
-      return false ;
-    }
-    $book = self::get_book_id($result2[0]) ; 
-    $chapter = $result2[1];
-    if (count(';',$result[1]) > 0) {
-      $verses = preg_split('/;/', $result[1]) ;
-    } else {
-      $verses = array($result[1] )  ;
-    }
-
-    return array($book, $chapter, $verses);
-  }
-
-  static function get_reference($ref){
-    $ref = self::parse_reference($ref) ;
-    $text = "" ;
-    for ($i = 0; $i < count($ref[2]); $i++) {
-      $params = array( $ref[0], $ref[1], $ref[2][$i] );
-      $text .= self::get_verse_or_verse_range( $params ) ;
-    }
-    return $text ; 
-  }
-}
+require_once('bible_reference.php'); 
+require_once('includes/haml/HamlParser.class.php');
 
 function biblecn_filter($content) {
   $content = preg_replace("'\[Bible:(.*?)\]'e", "BibleReference::get_reference('\\1')", $content);
@@ -93,12 +35,17 @@ function biblecn_filter($content) {
 
 }
 
+function biblecn_install(){
+    return true ; 
+}
+
 if( function_exists('add_filter') && function_exists('add_action') ) {
   if ( isset($_GET['activate']) && $_GET['activate'] == 'true' ){
     add_action( 'init', 'biblecn_install' );
   }
 	
-	add_filter( 'the_content', 'biblecn_filter' );
+  add_filter( 'the_content', 'biblecn_filter' );
 	
 }
 ?>
+
