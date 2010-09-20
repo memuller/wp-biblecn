@@ -1,0 +1,6 @@
+%blockquote
+  - foreach ( $quotes as $quote )
+    %sup= $quote['number']
+    = $quote['text']
+  %p.quotation
+    = $reference
