@@ -37,6 +37,11 @@ function biblecn_filter($content) {
 
 }
 
+// Post-update check for quotes validation.
+function check_quotes_are_valid($post_id) {
+  $post = get_post($post_id);
+}
+
 // Install function, executed when the plugin is enabled.
 function biblecn_install(){
     return true ; 
@@ -49,6 +54,8 @@ if( function_exists('add_filter') && function_exists('add_action') ) {
   }
 	
   add_filter( 'the_content', 'biblecn_filter' );
+  add_action('pre_post_update', 'check_quotes_are_valid');
+
 	
 }
 ?>
