@@ -52,4 +52,3 @@ if( function_exists('add_filter') && function_exists('add_action') ) {
 	
 }
 ?>
-
