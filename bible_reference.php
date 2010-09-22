@@ -101,7 +101,7 @@ class BibleReference {
     $chapter = $result2[1];
 
     // If there's more than one verse, split then and stuff them into the array
-    if (count(';',$result[1]) > 0) {
+    if (substr_count(';',$result[1]) > 0) {
       $verses = preg_split('/;/', $result[1]) ;
     } else {
       $verses = array($result[1] )  ;
