@@ -32,7 +32,7 @@
       $results = BibleReference::list_books();
       $books = array();
       foreach ($results as $result){
-        $books[]= $result->liv_nome . ' -> ' . $result->liv_abrev  ;
+        $books[]= array( 'name' => $result->liv_nome, 'abbreviation' => $result->liv_abrev );
       }
       return self::render('books_list', array( 'books' => $books, 'title' => $title  )  );
     }
