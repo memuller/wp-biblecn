@@ -13,10 +13,10 @@
     }
 
     static function render_to_string($view, $scope){
-      $parser = new HamlParser ;
+      $path = BibleReference::plugin_path() . 'views/'; 
+      $parser = new HamlParser($path, $path);
       $parser->append($scope) ;
-      $path = BibleReference::plugin_path() . 'views/'  . $view . '.haml'; 
-      return $parser->fetch($path) ;
+      return $parser->fetch($view . '.haml') ;
     }
 
     static function render($view, $scope){
