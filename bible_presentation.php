@@ -8,9 +8,6 @@
      * On failure: failure not possible
      * On error: uncatched
      */
-    static function build_quotes_for_haml($text, $number){
-      return array( 'number' => $number , 'text' => $text) ;
-    }
 
     static function render_to_string($view, $scope){
       $path = BibleReference::plugin_path() . 'views/'; 
