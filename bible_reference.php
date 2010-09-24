@@ -29,9 +29,9 @@ class BibleReference {
    * On failure: ??
    * On error: uncatched
    */
-  static function get_book_id($abbr){
+  static function get_book_info($abbr){
     $response = self::nusoap_client()->call( 'listarLivros', array('', '', $abbr)) ; 
-    return $response['item']['liv_cod']  ;
+    return array( 'id' => $response['item']['liv_cod'], 'abbreviation' => $response['item']['liv_abr'], 'name' => $response['item']['liv_nome']  );
   }
   
   // == array static function list_books
@@ -100,7 +100,9 @@ class BibleReference {
       return false ;
     }
 
-    $book = self::get_book_id($result2[0]) ; 
+    $book = self::get_book_info($result2[0]) ;
+    $book_name = $book['name'];
+    $book = $book['id'];
     $chapter = $result2[1];
     // If there's more than one verse, split then and stuff them into the array
     if (substr_count($result[1], ';' ) > 0) {
@@ -109,7 +111,7 @@ class BibleReference {
       $verses = array($result[1] )  ;
     }
 
-    return array($book, $chapter, $verses, $ref);
+    return array($book, $chapter, $verses, $ref, $book_name);
   }
 
 
@@ -124,6 +126,7 @@ class BibleReference {
   static function get_reference($ref){
     $ref = self::parse_reference($ref) ;
     $quotes = array();
+    $book_name = $ref[4];
     // Fetches verse(s) for each verse/verse range parsed.
     for ($i = 0; $i < count($ref[2]); $i++) {
       $params = array( $ref[0], $ref[1], $ref[2][$i]);
@@ -132,7 +135,7 @@ class BibleReference {
         $quotes[]= $temp;
       }
     }
-    return $quotes ; 
+    return array( $quotes, $book_name ) ; 
   }
 }
 ?>

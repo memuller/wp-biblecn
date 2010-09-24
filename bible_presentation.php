@@ -23,9 +23,18 @@
       echo self::render_to_string($view, $scope) ;
     }
 
+    static function make_full_reference($ref, $book_name){
+      $space_position = strpos($ref, ' ');
+      $book_abrev = substr($ref, 0, $space_position);
+      $full_reference = preg_replace("/$book_abrev/", $book_name, $ref);
+      return $full_reference ;
+    }
+
     static function get_reference($ref){
-      $quotes = BibleReference::get_reference($ref);
-      return self::render_to_string('quotes', array('quotes' => $quotes, 'reference' => $ref)  );
+      $result = BibleReference::get_reference($ref);
+      $quotes = $result[0];
+      $full_reference = self::make_full_reference($ref, $result[1]) ;
+      return self::render_to_string('quotes', array('quotes' => $quotes, 'reference' => $ref, 'full_reference' => $full_reference)  );
     }
 
     static function book_list(){
