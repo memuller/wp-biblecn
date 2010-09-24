@@ -53,7 +53,7 @@ if( function_exists('add_filter') && function_exists('add_action') ) {
   }
 
   function adm_menu(){
-    add_submenu_page( 'options-general.php', 'WP-BibleCN', 'WP-BibleCN', 10, __FILE__ , 'BiblePresenter::book_list'  );
+    add_submenu_page( 'options-general.php', 'WP-BibleCN Options', 'BibleCN', 'edit_posts', __FILE__  , 'BiblePresenter::book_list'  );
   }
 
   add_action('admin_menu', 'adm_menu');
