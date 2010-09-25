@@ -21,7 +21,7 @@
     }
 
     static function make_full_reference($ref, $book_name){
-      $space_position = strpos($ref, ' ');
+      $space_position = strpos($ref, ' ',1);
       $book_abrev = substr($ref, 0, $space_position);
       $full_reference = preg_replace("/$book_abrev/", $book_name, $ref);
       return $full_reference ;
