@@ -67,6 +67,9 @@ class BibleReference {
     // If there's only one verse, fetches it and stuffs its text into the array.
     if( $num_hiphens == 0 ){
       $response = call_user_func_array(array($client, "listarVersiculos" ), $things) ;
+      if(empty($response)){
+        return false;
+      }
       $quotes[] = array( 'text'=> $response[0]->ver_conteudo, 'number' => $things[2] ) ; 
 
     // If there's a verse range, gets everything between them and stuffs them into the array.
@@ -74,6 +77,9 @@ class BibleReference {
       $verses = preg_split( '/-/', $things[2]);
       $params = array( $things[0], $things[1], $verses[0], $verses[1]);
       $response = call_user_func_array( array( $client, "listarVersiculosIntervalo"), $params)  ;
+      if (empty($response)) {
+        return false ;
+      }
       $text = "";
       for ($i = 0; $i < count($response); $i++) {
         $quotes[] = array( 'text' => $response[$i]->ver_conteudo , 'number' => $i + $verses[0] ) ;
