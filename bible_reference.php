@@ -32,6 +32,7 @@ class BibleReference {
 
   static function get_book_info($abbr){
     $response = self::client()->listarLivros(null, null, $abbr);
+    return false if empty($response);
     $book = $response[0] ;
     $item = array( 'id' => $book->liv_cod, 'abbreviation' => $book->liv_abr, 'name' => $book->liv_nome );
     return $item ;
