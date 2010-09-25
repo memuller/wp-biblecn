@@ -29,9 +29,12 @@ class BibleReference {
    * On failure: ??
    * On error: uncatched
    */
+
   static function get_book_info($abbr){
-    $response = self::nusoap_client()->call( 'listarLivros', array('', '', $abbr)) ; 
-    return array( 'id' => $response['item']['liv_cod'], 'abbreviation' => $response['item']['liv_abr'], 'name' => $response['item']['liv_nome']  );
+    $response = self::client()->listarLivros(null, null, $abbr);
+    $book = $response[0] ;
+    $item = array( 'id' => $book->liv_cod, 'abbreviation' => $book->liv_abr, 'name' => $book->liv_nome );
+    return $item ;
   }
   
   // == array static function list_books
