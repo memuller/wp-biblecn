@@ -9,14 +9,16 @@
      * On error: uncatched
      */
 
-    static function render_to_string($view, $scope){
+    static function render_to_string($view, $scope=array()){
       $path = BibleReference::plugin_path() . 'views/'; 
       $parser = new HamlParser($path, $path);
-      $parser->append($scope) ;
+      if ( ! empty($scope)) {
+        $parser->append($scope);
+      }
       return $parser->fetch($view . '.haml') ;
     }
 
-    static function render($view, $scope){
+    static function render($view, $scope=array()){
       echo self::render_to_string($view, $scope) ;
     }
 
