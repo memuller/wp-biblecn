@@ -29,11 +29,18 @@
       return $full_reference ;
     }
 
+    static function error(){
+      return self::render_to_string('error');
+    }
+
     static function get_reference($ref){
-      $result = BibleReference::get_reference($ref);
-      $quotes = $result[0];
-      $full_reference = self::make_full_reference($ref, $result[1]) ;
-      return self::render_to_string('quotes', array('quotes' => $quotes, 'reference' => $ref, 'full_reference' => $full_reference)  );
+        $result = BibleReference::get_reference($ref);
+        if ($result == false) {
+          return  self::error();
+        }
+        $quotes = $result[0];
+        $full_reference = self::make_full_reference($ref, $result[1]) ;
+        return self::render_to_string('quotes', array('quotes' => $quotes, 'reference' => $ref, 'full_reference' => $full_reference)  );
     }
 
     static function book_list(){
