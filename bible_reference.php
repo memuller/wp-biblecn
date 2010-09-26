@@ -113,6 +113,9 @@ class BibleReference {
     }
 
     $book = self::get_book_info($result2[0]) ;
+    if ($book == false) {
+      return false ;
+    }
     $book_name = $book['name'];
     $book = $book['id'];
     $chapter = $result2[1];
@@ -137,12 +140,18 @@ class BibleReference {
    */
   static function get_reference($ref){
     $ref = self::parse_reference($ref) ;
+    if ($ref == false) {
+      return false;
+    }
     $quotes = array();
     $book_name = $ref[4];
     // Fetches verse(s) for each verse/verse range parsed.
     for ($i = 0; $i < count($ref[2]); $i++) {
       $params = array( $ref[0], $ref[1], $ref[2][$i]);
       $temps = self::get_verse_or_verse_range( $params , $ref[3]) ;
+      if ($temps == false) {
+        return false;
+      }
       foreach ($temps as $temp){
         $quotes[]= $temp;
       }
