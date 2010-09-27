@@ -36,7 +36,7 @@ class BibleReference {
       return false ;
     }
     $book = $response[0] ;
-    $item = array( 'id' => $book->liv_cod, 'abbreviation' => $book->liv_abr, 'name' => $book->liv_nome );
+    $item = array( 'id' => $book->liv_cod, 'abbreviation' => $book->liv_abrev, 'name' => $book->liv_nome );
     return $item ;
   }
   
