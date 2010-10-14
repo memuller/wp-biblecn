@@ -1,19 +1,22 @@
 %div
-  %h1. Como utilizar?
+  %h1 Como utilizar?
   Para inserir uma citação bíblica em seu post, utilize a seguinte sintaxe:
   %blockquote [Bible Gn 1, 2-10]
-  Ou seja, 'Bible' e a referência bíblica que deseja, ambos entre colchetes.
+  %p Ou seja, 'Bible' e a referência bíblica que deseja, ambos entre colchetes. No exemplo acima:
+  %ul
+    %li Gn é a sigla do livro desejado.
+    %li 1 é um capítulo deste livro.
+    %li 2-10 são os versículos desejados.
   %ul
     %li Caso queira múltiplos versículos, separe-os por ponto-e-vírgula. Ex.: 1;5
     %li Caso queira consultar um trecho de versículos consecutivos, especifique-os com um hífen. Ex.: 1-5
     %li No caso de versículos de capítulos ou livros diferentes, é preciso inserir outra citação.
-
   %h1 Lista de Livros e suas Abreviações
-  %table.list
+  %table
     %tr
-      %td Abreviação
-      %td Nome
+      %th Abreviatura
+      %th Livro
     - foreach($books as $book)
       %tr
-        %td= $books['abbreviation']
-        %td= $books['name']
+        %td= $book['abbreviation']
+        %td= $book['name']

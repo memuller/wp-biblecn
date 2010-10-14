@@ -8,24 +8,39 @@
      * On failure: failure not possible
      * On error: uncatched
      */
-    static function build_quotes_for_haml($text, $number){
-      return array( 'number' => $number , 'text' => $text) ;
-    }
 
-    static function render_to_string($view, $scope){
+    static function render_to_string($view, $scope=array()){
       $path = BibleReference::plugin_path() . 'views/'; 
       $parser = new HamlParser($path, $path);
-      $parser->append($scope) ;
+      if ( ! empty($scope)) {
+        $parser->append($scope);
+      }
       return $parser->fetch($view . '.haml') ;
     }
 
-    static function render($view, $scope){
+    static function render($view, $scope=array()){
       echo self::render_to_string($view, $scope) ;
     }
 
+    static function make_full_reference($ref, $book_name){
+      $space_position = strpos($ref, ' ',1);
+      $book_abrev = substr($ref, 0, $space_position);
+      $full_reference = preg_replace("/$book_abrev/", $book_name, $ref);
+      return $full_reference ;
+    }
+
+    static function error(){
+      return self::render_to_string('error');
+    }
+
     static function get_reference($ref){
-      $quotes = BibleReference::get_reference($ref);
-      return self::render_to_string('quotes', array('quotes' => $quotes, 'reference' => $ref)  );
+        $result = BibleReference::get_reference($ref);
+        if ($result == false) {
+          return  self::error();
+        }
+        $quotes = $result[0];
+        $full_reference = self::make_full_reference($ref, $result[1]) ;
+        return self::render_to_string('quotes', array('quotes' => $quotes, 'reference' => $ref, 'full_reference' => $full_reference)  );
     }
 
     static function book_list(){

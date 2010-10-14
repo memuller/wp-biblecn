@@ -29,9 +29,15 @@ class BibleReference {
    * On failure: ??
    * On error: uncatched
    */
-  static function get_book_id($abbr){
-    $response = self::nusoap_client()->call( 'listarLivros', array('', '', $abbr)) ; 
-    return $response['item']['liv_cod']  ;
+
+  static function get_book_info($abbr){
+    $response = self::client()->listarLivros(null, null, $abbr);
+    if (empty($response)) {
+      return false ;
+    }
+    $book = $response[0] ;
+    $item = array( 'id' => $book->liv_cod, 'abbreviation' => $book->liv_abrev, 'name' => $book->liv_nome );
+    return $item ;
   }
   
   // == array static function list_books
@@ -61,6 +67,9 @@ class BibleReference {
     // If there's only one verse, fetches it and stuffs its text into the array.
     if( $num_hiphens == 0 ){
       $response = call_user_func_array(array($client, "listarVersiculos" ), $things) ;
+      if(empty($response)){
+        return false;
+      }
       $quotes[] = array( 'text'=> $response[0]->ver_conteudo, 'number' => $things[2] ) ; 
 
     // If there's a verse range, gets everything between them and stuffs them into the array.
@@ -68,6 +77,9 @@ class BibleReference {
       $verses = preg_split( '/-/', $things[2]);
       $params = array( $things[0], $things[1], $verses[0], $verses[1]);
       $response = call_user_func_array( array( $client, "listarVersiculosIntervalo"), $params)  ;
+      if (empty($response)) {
+        return false ;
+      }
       $text = "";
       for ($i = 0; $i < count($response); $i++) {
         $quotes[] = array( 'text' => $response[$i]->ver_conteudo , 'number' => $i + $verses[0] ) ;
@@ -100,7 +112,12 @@ class BibleReference {
       return false ;
     }
 
-    $book = self::get_book_id($result2[0]) ; 
+    $book = self::get_book_info($result2[0]) ;
+    if ($book == false) {
+      return false ;
+    }
+    $book_name = $book['name'];
+    $book = $book['id'];
     $chapter = $result2[1];
     // If there's more than one verse, split then and stuff them into the array
     if (substr_count($result[1], ';' ) > 0) {
@@ -109,7 +126,7 @@ class BibleReference {
       $verses = array($result[1] )  ;
     }
 
-    return array($book, $chapter, $verses, $ref);
+    return array($book, $chapter, $verses, $ref, $book_name);
   }
 
 
@@ -123,16 +140,23 @@ class BibleReference {
    */
   static function get_reference($ref){
     $ref = self::parse_reference($ref) ;
+    if ($ref == false) {
+      return false;
+    }
     $quotes = array();
+    $book_name = $ref[4];
     // Fetches verse(s) for each verse/verse range parsed.
     for ($i = 0; $i < count($ref[2]); $i++) {
       $params = array( $ref[0], $ref[1], $ref[2][$i]);
       $temps = self::get_verse_or_verse_range( $params , $ref[3]) ;
+      if ($temps == false) {
+        return false;
+      }
       foreach ($temps as $temp){
         $quotes[]= $temp;
       }
     }
-    return $quotes ; 
+    return array( $quotes, $book_name ) ; 
   }
 }
 ?>
