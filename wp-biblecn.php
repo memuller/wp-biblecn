@@ -4,7 +4,7 @@ Plugin Name: WP-BibleCN
 Plugin URI: http://retrospectiva.deploy.cancaonova.com/projects/por-trás-das-palavras
 Description: This plugin allows the insertion of Bible verses quoted in articles. The verses are extracted from Canção Nova's Online Bible service, and are on Brazilian Portuguese.
 Author: Matheus E. Muller, for Canção Nova
-Version: 0.6
+Version: 0.6.1
 Author URI: http://memuller.com
 */
 
@@ -31,7 +31,7 @@ require_once('bible_reference.php');
 
 // The filter. Replaces references on the_content with quotations.
 function biblecn_filter($content) {
-  $content = preg_replace("'\[Bible:(.*?)\]'e", "BiblePresenter::get_reference('\\1')", $content);
+  $content = preg_replace("'\[Bible (.*?)\]'e", "BiblePresenter::get_reference('\\1')", $content);
   return $content;	
 
 }
